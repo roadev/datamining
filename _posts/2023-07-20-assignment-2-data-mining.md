@@ -7,9 +7,14 @@ gh-badge: [star, fork, follow]
 tags: [data-analysis]
 comments: true
 ---
-
+# Assignment 2. Data cleaning, schema matching, and data matching
+### COMPSCI 767
+#### Juan David Roa Valencia
 ## Data Loading and Preliminary Analysis
-```python
+
+## [Download this Markdown/Page in PDF]({{ "/assets/files/2023-07-20-assignment-2-data-mining.pdf" | relative_url }})
+
+```python   
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -595,3 +600,39 @@ Based on the exploratory data analysis, we better understand the tables `TableA`
 4. **Language Identification**: The text data in both tables is predominantly in English, particularly in the `abstract` field. However, a small number of entries in other languages in the `title` field may need to be considered in the data cleaning process. 
 
 The above conclusions provide an understanding of the data at hand. The following steps involve cleaning and preprocessing the data considering the insights obtained. This includes dealing with missing values, removing duplicates, handling texts in other languages, and normalizing the lengths of text fields. After these steps, we can proceed with the data matching, using suitable methods for textual data, such as Jaccard similarity, Levenshtein distance, or more sophisticated methods like TF-IDF vectorization followed by cosine similarity.
+
+# Libraries and tools used on this project
+
+* Python 3.10
+* pandas
+* numpy
+* matplotlib
+* langdetect
+* datetime
+
+The following code was used to normalize the format of the `'date'` field
+
+```python
+from datetime import datetime
+
+def parse_date(date_string):
+    try:
+        return datetime.strptime(date_string, '%d %B %Y')
+    except ValueError:
+        try:
+            return datetime.strptime(date_string, '%B %Y')
+        except ValueError:
+            return pd.NaT
+
+df_tableA['date'] = df_tableA['date'].apply(parse_date)
+df_tableB['date'] = df_tableB['date'].apply(parse_date)
+```
+<br />
+
+## Blog engine and tools
+
+* I implemented a free software (MIT license) Jekyll template for blogging which I adapted for my class projects.
+* I will migrate the assignment one content to this new implementation.
+* Jekyll is a static website generator built in the Ruby language. I have used it for several personal and professional projects in the past.
+* This type of website is great for working on this kind of project because it has many tools and customization possibilities for content and code snippets.
+* Everything is written in Markdown syntax (source code of this website can be accessed at [https://github.com/roadev/datamining](https://github.com/roadev/datamining)).
