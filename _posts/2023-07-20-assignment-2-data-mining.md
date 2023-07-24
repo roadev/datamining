@@ -1,16 +1,15 @@
 ---
 layout: post
-title: Data Loading and Preliminary Analysis
-subtitle: Loading the data and identifying missing values and data types
-gh-repo: your-github-username/your-repo-name
+title: Assignment 2. Data cleaning, schema matching, and data matching
+subtitle: COMPSCI 767
+gh-repo: roadev/datamining
 gh-badge: [star, fork, follow]
 tags: [data-analysis]
 comments: true
 ---
 
+## Data Loading and Preliminary Analysis
 ```python
-# Preliminary Analysis
-
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -268,7 +267,7 @@ This report compares two distinct datasets: `"tableA"` and `"tableB"`. The targe
 
 ## Methodology
 
-To compare the two datasets, we decided to focus on the `"title"` attribute, which is common to both datasets. Specifically, we looked at the length of the title as a characteristic feature for comparison.
+To compare the two datasets, the main focus will be on the `"title"` attribute, which is common to both datasets. Specifically, we looked at the length of the title as a characteristic feature for comparison.
 
 A `boxplot` was used to visualize the distribution of the title lengths in each dataset. A boxplot, or box-and-whisker plot, displays a summary of the set of data values having properties like minimum, first quartile, median, third quartile, and maximum. In the boxplot, a box is created from the first quartile to the third quartile. A vertical line is also there, which goes through the box at the median. Here whiskers are drawn from the edges of the box to show the range of the data.
 
@@ -433,6 +432,43 @@ print(description_tableB_abstract)
     - 75%: 212
     - Maximum: 215
 
+## Identifying Unique and Duplicate Entries
+
+```python
+unique_titles_A = df_tableA['title'].nunique()
+unique_authors_A = df_tableA['authors'].nunique()
+unique_abstracts_A = df_tableA['abstract'].nunique()
+
+print(f"Unique titles in TableA: {unique_titles_A}")
+print(f"Unique authors in TableA: {unique_authors_A}")
+print(f"Unique abstracts in TableA: {unique_abstracts_A}")
+
+duplicate_titles_A = df_tableA.duplicated(['title']).sum()
+duplicate_authors_A = df_tableA.duplicated(['authors']).sum()
+duplicate_abstracts_A = df_tableA.duplicated(['abstract']).sum()
+
+print(f"Duplicate titles in TableA: {duplicate_titles_A}")
+print(f"Duplicate authors in TableA: {duplicate_authors_A}")
+print(f"Duplicate abstracts in TableA: {duplicate_abstracts_A}")
+
+unique_titles_B = df_tableB['title'].nunique()
+unique_authors_B = df_tableB['authors'].nunique()
+unique_abstracts_B = df_tableB['abstract'].nunique()
+
+print(f"Unique titles in TableB: {unique_titles_B}")
+print(f"Unique authors in TableB: {unique_authors_B}")
+print(f"Unique abstracts in TableB: {unique_abstracts_B}")
+
+duplicate_titles_B = df_tableB.duplicated(['title']).sum()
+duplicate_authors_B = df_tableB.duplicated(['authors']).sum()
+duplicate_abstracts_B = df_tableB.duplicated(['abstract']).sum()
+
+print(f"Duplicate titles in TableB: {duplicate_titles_B}")
+print(f"Duplicate authors in TableB: {duplicate_authors_B}")
+print(f"Duplicate abstracts in TableB: {duplicate_abstracts_B}")
+
+```
+
 
 **Title length in TableA:**
 - The average length of a title is approximately 78 characters.
@@ -448,4 +484,114 @@ print(description_tableB_abstract)
 - 50% of the abstracts have a length of 1359 characters or less (median).
 - Most abstracts (75%) have lengths under 1579 characters.
 
-This might suggest differences in how the data was collected or entered for each table. For example, there might be a strict character limit for abstracts in the source that TableB was collected from. These kind of insights can be useful when considering how to preprocess the data for further analysis or modeling.
+This might suggest differences in how the data was collected or entered for each table. For example, there might be a strict character limit for abstracts in the source that TableB was collected from. These kinds of insights can be helpful when considering how to preprocess the data for further analysis or modeling.
+
+
+### For TableA:
+
+All `'title'` and `'abstract'` entries are unique, with no duplicates.
+There are 6 duplicate 'authors' entries, indicating that the same author or group of authors has published more than one paper.
+
+### For TableB:
+
+There are 86 duplicate `'title'` entries, 83 duplicate `'authors'` entries, and 150 duplicate `'abstract'` entries. This might indicate that several papers are highly similar, or even the same, in this dataset.
+
+This can be particularly important when performing a data matching between the two tables. Cleaning the data by removing duplicates, especially in TableB should be considered. However, we must be careful because duplicates might be due to different reasons: It could be an error, but the same author or group of authors publishing in different years or journals, but the work is essentially the same.
+
+## Checking for Missing Values
+
+```python
+missing_values_A = df_tableA.isnull().sum()
+print("Missing values in TableA:")
+print(missing_values_A)
+
+missing_values_B = df_tableB.isnull().sum()
+print("\nMissing values in TableB:")
+print(missing_values_B)
+
+```
+
+**TableA** does not contain any missing values across its fields. This is a good indicator of the completeness of the data.
+
+On the other hand, **TableB** has missing data in the `'authors'` and `'abstract'` columns. Specifically, there are:
+- 21 missing values in the `'authors'` column
+- 101 missing values in the `'abstract'` column
+
+The analysis process needs to include data to ensure the results are accurate. Handling missing values properly is crucial. Various strategies for handling missing data include:
+
+- **Deleting Rows:** This method involves removing the rows with missing values. This is typically used when the number of missing values is small. However, if the missing data is not random, this can introduce bias. 
+
+- **Filling with a specific value:** Sometimes, filling the missing values with a specific value might make sense. For instance, if we are sure that the absence of a value indicates a zero, then filling with 0 might be appropriate.
+
+- **Filling with a central tendency measure:** For numerical columns, we might fill in missing values with a measure of central tendency, such as the mean or median. The mode (or most common value) is often used for categorical columns.
+
+- **Data imputation:** This involves filling missing values based on other dataset information. A simple method is to fill with the average of similar items. More sophisticated methods involve using machine learning algorithms to predict missing values.
+
+Choosing the right strategy depends on the nature of the data and the specific context.
+
+Handling missing values is one of the critical steps in data preprocessing. Depending on the choice of handling missing data, the next steps in data cleaning involve dealing with duplicates, handling outliers, and normalizing or standardizing data.
+
+
+
+## Identifying Language of Text Data
+
+Using the langdetect library, we can identify the predominant language of the text fields in our datasets. This library can detect over 55 languages and assigns a language code to each text it is given. It's important to note that this is a probabilistic method and may only sometimes be perfectly accurate, especially with shorter texts.
+
+
+```python
+from langdetect import detect
+
+def detect_language(text):
+    try:
+        return detect(text)
+    except:
+        return None
+
+df_tableA['title_lang'] = df_tableA['title'].apply(detect_language)
+df_tableA['abstract_lang'] = df_tableA['abstract'].apply(detect_language)
+
+df_tableB['title_lang'] = df_tableB['title'].apply(detect_language)
+df_tableB['abstract_lang'] = df_tableB['abstract'].apply(detect_language)
+
+title_lang_count_tableA = df_tableA['title_lang'].value_counts()
+abstract_lang_count_tableA = df_tableA['abstract_lang'].value_counts()
+
+title_lang_count_tableB = df_tableB['title_lang'].value_counts()
+abstract_lang_count_tableB = df_tableB['abstract_lang'].value_counts()
+
+print("Language counts for 'title' in TableA:")
+print(title_lang_count_tableA)
+print("\nLanguage counts for 'abstract' in TableA:")
+print(abstract_lang_count_tableA)
+
+print("\nLanguage counts for 'title' in TableB:")
+print(title_lang_count_tableB)
+print("\nLanguage counts for 'abstract' in TableB:")
+print(abstract_lang_count_tableB)
+
+```
+
+**Results of the analysis:**
+
+#### TableA
+**Title:** Predominantly in English (en) with 982 entries. There are a small number of titles in Italian (it), French (fr), Dutch (nl), Romanian (ro), Portuguese (pt), Catalan (ca), and Norwegian (no).
+**Abstract:** Almost exclusively in English (en) with 999 entries. There is a single abstract in French (fr).
+#### TableB
+**Title:** Predominantly in English (en) with 942 entries. There are also titles in Romanian (ro), Catalan (ca), Italian (it), French (fr), German (de), Danish (da), Tagalog (tl), and Dutch (nl).
+**Abstract:** Exclusively in English (en) with 899 entries.
+
+From this, we can see that the text data in both tables is predominantly in English, particularly for the abstract field. This means there is no need to perform a language translation. However, a small number of entries in other languages may need to be considered in the data cleaning process. The presence of multiple languages in `'title'` might be because of the international nature of scientific publications. Language detection can also be improved, especially for shorter texts like titles.
+
+# Conclusions
+
+Based on the exploratory data analysis, we better understand the tables `TableA` and `TableB`. Here are the key takeaways:
+
+1. **Text Lengths**: `Title` and `abstract` lengths vary across and within the tables. `TableA` has significantly longer abstracts than `TableB`. Understanding these differences can help formulate better data cleaning and preprocessing strategies and may report our choices when constructing a data matching algorithm.
+
+2. **Unique and Duplicate Entries**: We have identified the count of unique and duplicate entries in both tables. Notably, `TableB` has many duplicate titles, authors, and abstracts. This might indicate that several papers are highly similar or even the same in this dataset. This information will be crucial when performing data matching.
+
+3. **Missing Values**: `TableB` contains missing values in `authors` and `abstracts`, while `TableA` has no missing data. Handling these missing values will be essential to the data preprocessing step.
+
+4. **Language Identification**: The text data in both tables is predominantly in English, particularly in the `abstract` field. However, a small number of entries in other languages in the `title` field may need to be considered in the data cleaning process. 
+
+The above conclusions provide an understanding of the data at hand. The following steps involve cleaning and preprocessing the data considering the insights obtained. This includes dealing with missing values, removing duplicates, handling texts in other languages, and normalizing the lengths of text fields. After these steps, we can proceed with the data matching, using suitable methods for textual data, such as Jaccard similarity, Levenshtein distance, or more sophisticated methods like TF-IDF vectorization followed by cosine similarity.
