@@ -16,155 +16,436 @@ import matplotlib.pyplot as plt
 
 def load_and_analyze_data(path):
     df = pd.read_csv(path)
-    
-    # Display the percentage of missing values in each column
+
     missing_values_percentage = df.isnull().mean() * 100
-    print(f'Percentage of missing values in {path.split("/")[-1]}:')
+    print(f"Percentage of missing values in {path.split("/")[-1]}:")
     print(missing_values_percentage)
     
-    # Display the data type of each column
     data_types = df.dtypes
-    print(f'\nData types of the columns in {path.split("/")[-1]}:')
+    print(f"\nData types of the columns in {path.split("/")[-1]}:")
     print(data_types)
     
     return df
 
-df_tableA = load_and_analyze_data('tableA/tableA.csv')
-df_tableB = load_and_analyze_data('tableB/tableB.csv')
+df_tableA = load_and_analyze_data("tableA/tableA.csv")
+df_tableB = load_and_analyze_data("tableB/tableB.csv")
+```
+
+#### Output:
+
+
+```
+Percentage of missing values in tableA.csv:
+ID          0.0
+title       0.0
+authors     0.0
+abstract    0.0
+url         0.0
+date        0.0
+dtype: float64
+
+Data types of the columns in tableA.csv:
+ID           int64
+title       object
+authors     object
+abstract    object
+url         object
+date        object
+dtype: object
+Percentage of missing values in tableB.csv:
+ID           0.0
+title        0.0
+authors      2.1
+abstract    10.1
+url          0.0
+date         0.0
+dtype: float64
+
+Data types of the columns in tableB.csv:
+ID           int64
+title       object
+authors     object
+abstract    object
+url         object
+date        object
+dtype: object
 ```
 
 
-
 {: .box-note}
-**Note:** The csv files were loaded into pandas dataframes. We then performed a preliminary analysis on the datasets.
-This included identifying missing values and understanding the data types of each column.
+**Note:** The csv files were loaded into `pandas dataframes`.
 
-Here's a code chunk:
 
 ~~~python
-# Display the percentage of missing values in each column
 missing_values_percentage = df.isnull().mean() * 100
-print(f'Percentage of missing values in {path.split("/")[-1]}:')
+print(f"Percentage of missing values in {path.split("/")[-1]}:")
 print(missing_values_percentage)
     
-# Display the data type of each column
 data_types = df.dtypes
-print(f'\nData types of the columns in {path.split("/")[-1]}:')
+print(f"\nData types of the columns in {path.split("/")[-1]}:")
 print(data_types)
 ~~~
 
 {: .box-note}
-**Note:** For columns of type 'object' (strings), we calculated the average, minimum, and maximum lengths.
-
-Here's a code chunk:
+**Note:** For columns of type `"object"` (strings), the average, minimum, and maximum lengths were calculated.
 
 ~~~python
-# If a column is of object type (string), report the average, minimum, and maximum length
-for column in df.select_dtypes(include='object').columns:
+for column in df.select_dtypes(include="object").columns:
     average_length = df[column].str.len().mean()
     minimal_length = df[column].str.len().min()
     maximal_length = df[column].str.len().max()
 
-    print(f"\nFor column '{column}' in {df_name}:")
+    print(f"\nFor column "{column}" in {df_name}:")
     print(f"Average length: {average_length:.3f}")
     print(f"Minimal length: {minimal_length}")
     print(f"Maximal length: {maximal_length}")
 ~~~
 
+#### Output:
+
+```
+For column "title" in tableA:
+Average length: 78.259
+Minimal length: 14
+Maximal length: 194
+
+For column "authors" in tableA:
+Average length: 63.550
+Minimal length: 7
+Maximal length: 463
+
+For column "abstract" in tableA:
+Average length: 1346.466
+Minimal length: 412
+Maximal length: 2232
+
+For column "url" in tableA:
+Average length: 49.000
+Minimal length: 49
+Maximal length: 49
+
+For column "date" in tableA:
+Average length: 10.831
+Minimal length: 8
+Maximal length: 14
+
+For column "title" in tableB:
+Average length: 85.043
+Minimal length: 9
+Maximal length: 249
+
+For column "authors" in tableB:
+Average length: 60.471
+Minimal length: 8.0
+Maximal length: 288.0
+
+For column "abstract" in tableB:
+Average length: 201.875
+Minimal length: 11.0
+Maximal length: 215.0
+
+For column "url" in tableB:
+Average length: 96.858
+Minimal length: 83
+Maximal length: 120
+
+For column "date" in tableB:
+Average length: 13.682
+Minimal length: 9
+Maximal length: 17
+```
+
+
 ## Data Visualization and Outlier Detection
 
 {: .box-note}
-**Note:** Histograms were created for the 'title' and 'abstract' columns of both dataframes to get an understanding of the distribution of lengths and to identify potential outliers.
+**Note:** Histograms were created for the `"title"` and `"abstract"` columns of both dataframes to understand the distribution of lengths and identify potential outliers.
 
-Here's a code chunk:
 
 ~~~python
 plt.figure(figsize=(10, 4))
 
 plt.subplot(1, 2, 1)
-plt.hist(df['title'].str.len(), bins=20, color='skyblue', edgecolor='black')
-plt.title(f'Histogram of Title Lengths in {df_name}')
-plt.xlabel('Length')
-plt.ylabel('Frequency')
+plt.hist(df["title"].str.len(), bins=20, color="skyblue", edgecolor="black")
+plt.title(f"Histogram of Title Lengths in {df_name}")
+plt.xlabel("Length")
+plt.ylabel("Frequency")
 
 plt.subplot(1, 2, 2)
-plt.hist(df['abstract'].str.len(), bins=20, color='skyblue', edgecolor='black')
-plt.title(f'Histogram of Abstract Lengths in {df_name}')
-plt.xlabel('Length')
-plt.ylabel('Frequency')
+plt.hist(df["abstract"].str.len(), bins=20, color="skyblue", edgecolor="black")
+plt.title(f"Histogram of Abstract Lengths in {df_name}")
+plt.xlabel("Length")
+plt.ylabel("Frequency")
 
 plt.tight_layout()
 plt.show()
 ~~~
 
+![Histograms]({{ "/assets/img/Figure_1.png" | relative_url }})
+
+![Histograms]({{ "/assets/img/Figure_2.png" | relative_url }})
+
 ## Outlier Identification
 
 {: .box-note}
-**Note:** Outliers were identified in the 'ID' column using the Interquartile Range (IQR) method.
+**Note:** Outliers were identified in the `"ID"` column using the Interquartile Range (`IQR`) method.
 
-Here's a code chunk:
 
 ~~~python
-Q1 = df['ID'].quantile(0.25)
-Q3 = df['ID'].quantile(0.75)
+Q1 = df["ID"].quantile(0.25)
+Q3 = df["ID"].quantile(0.75)
 IQR = Q3 - Q1
 
-# Define bounds for outliers
 lower_bound = Q1 - 1.5 * IQR
 upper_bound = Q3 + 1.5 * IQR
 
-# Identify outliers
-outliers = df[(df['ID'] < lower_bound) | (df['ID'] > upper_bound)]
+outliers = df[(df["ID"] < lower_bound) | (df["ID"] > upper_bound)]
 print(f"Outliers in {df_name}")
 print(outliers)
 ~~~
 
-## Comparing Distributions Between Datasets
+#### Output:
+
+```
+Outliers in tableA
+Empty DataFrame
+Columns: [ID, title, authors, abstract, url, date]
+Index: []
+Outliers in tableB
+Empty DataFrame
+Columns: [ID, title, authors, abstract, url, date]
+Index: []
+```
+
+## Comparing Length Distributions of "Title" Between Datasets
 
 {: .box-note}
-**Note:** Box plots were created to compare the distributions of the 'title' column in both dataframes. These visualizations help to understand if there are significant differences between the datasets.
+**Note:** Box plots were created to compare the distributions of the lengths of the `"title"` column in both dataframes. These visualizations help to understand if there are significant differences between the datasets regarding title lengths.
 
-Here's a code chunk:
 
 ~~~python
-data_to_plot = [df1['title'], df2['title']]
+def compare_distributions(df1, df2, column, df1_name, df2_name):
+    df1_lengths = df1[column].str.len()
+    df2_lengths = df2[column].str.len()
+    
+    data_to_plot = [df1_lengths.dropna(), df2_lengths.dropna()]
 
-# Create a figure instance
-fig = plt.figure(figsize=(10, 5))
+    fig = plt.figure(figsize=(10, 5))
 
-# Create an axes instance
-ax = fig.add_axes([0, 0, 1, 1])
+    ax = fig.add_axes([0, 0, 1, 1])
 
-# Create the boxplot
-bp = ax.boxplot(data_to_plot, patch_artist=True, notch=True, vert=0)
+    bp = ax.boxplot(data_to_plot, patch_artist=True, notch=True, vert=0)
 
-colors = ['#0000FF', '#00FF00']
+    colors = ["#0000FF", "#00FF00"]
 
-for patch, color in zip(bp['boxes'], colors):
-    patch.set_facecolor(color)
+    for patch, color in zip(bp["boxes"], colors):
+        patch.set_facecolor(color)
 
-# Changing color and linewidth of whiskers
-for whisker in bp['whiskers']:
-    whisker.set(color='#8B008B', linewidth=1.5)
+    for whisker in bp["whiskers"]:
+        whisker.set(color="#8B008B", linewidth=1.5)
 
-# Changing color and linewidth of caps
-for cap in bp['caps']:
-    cap.set(color ='#8B008B', linewidth = 2)
+    for cap in bp["caps"]:
+        cap.set(color ="#8B008B", linewidth = 2)
 
-# Changing color and linewidth of medians
-for median in bp['medians']:
-    median.set(color='red', linewidth=3)
+    for median in bp["medians"]:
+        median.set(color="red", linewidth=3)
 
-# x-axis labels
-ax.set_yticklabels(['tableA', 'tableB'])
+    ax.set_yticklabels([df1_name, df2_name])
 
-# Adding title
-plt.title('Comparison of Title Distribution between TableA and TableB')
+    plt.title(f"Comparison of {column} Length Distribution between {df1_name} and {df2_name}")
 
-# Removing top axes and right axes ticks
-ax.get_xaxis().tick_bottom()
-ax.get_yaxis().tick_left()
+    ax.get_xaxis().tick_bottom()
+    ax.get_yaxis().tick_left()
 
-# Show the plot
-plt.show()
+    plt.show()
+
+compare_distributions(df_tableA, df_tableB, "title", "tableA", "tableB")
 ~~~
+
+# Data Comparison Report
+
+This report compares two distinct datasets: `"tableA"` and `"tableB"`. The target is to analyze and compare the distribution of the lengths of `"title"` attribute in both datasets.
+
+## Methodology
+
+To compare the two datasets, we decided to focus on the `"title"` attribute, which is common to both datasets. Specifically, we looked at the length of the title as a characteristic feature for comparison.
+
+A `boxplot` was used to visualize the distribution of the title lengths in each dataset. A boxplot, or box-and-whisker plot, displays a summary of the set of data values having properties like minimum, first quartile, median, third quartile, and maximum. In the boxplot, a box is created from the first quartile to the third quartile. A vertical line is also there, which goes through the box at the median. Here whiskers are drawn from the edges of the box to show the range of the data.
+
+The plot was generated using the Python library `Matplotlib`, and the data pre-processing was done using `pandas`.
+
+## Results
+
+The boxplot produced (as shown below) presents a comparative view of the title length distribution in both `"tableA"` and `"tableB"`.
+
+The upper boxplot (green) represents the `"title"` length distribution in `"tableA"`, while the lower boxplot (blue) represents the `"title"` length distribution in "tableB".
+
+- **"tableA" (Green)**: The green plot shows a large interquartile range indicating high variability in the middle half of the title lengths in `"tableA"`. There is only one outlier on the extreme right which suggests there"s only one title that is significantly longer than all the others.
+
+- **"tableB" (Blue)**: The blue plot, on the other hand, has a short left whisker, indicating less variability in the shorter title lengths. However, many outliers on the right show that several titles with lengths are much larger than most of the title lengths in `"tableB"`.
+
+## Conclusion
+
+The analysis and comparison of the `"title"` attribute length in both `"tableA"` and "tableB" provide valuable insights into the datasets. Despite some differences, such as the number of outliers and the variability of title lengths, both datasets show a wide range of titles, indicating diverse topics and contexts.
+
+Further comparisons and more in-depth analyses can be performed to continue exploring the datasets based on different attributes and parameters.
+
+## Further Analysis Recommendations
+
+Future analysis could further explore the content of the `"title"`, `"abstract"`, and `"authors"` fields. For instance, text or word frequency analysis could offer insights into the prevalent topics within the dataset. The `"authors"` field could also be analyzed to identify the most prolific contributors or institutions.
+
+Temporal trends could also be investigated, provided the `"date"` field is consistently formatted. Such an analysis might reveal how title lengths or prominent topics have changed.
+
+The `"url"` field offers another potential area of exploration. Parsing these URLs may uncover additional information about the data sources or hosting journals, offering further context and insights.
+
+It is valuable to align any further analysis steps with these datasets' specific research questions and goals.
+
+## Measuring Textual Columns
+
+To evaluate the textual data's quality, a basic analysis of the length of values in the `'title'`, `'authors'``, `'abstract'`, and `'url'` columns will be performed. This is computed by calculating the average, minimum, and maximum lengths of the values in these columns for both tables.
+
+
+```python
+def measure_textual_columns(df, df_name, columns):
+    for column in columns:
+        avg_length = df[column].str.len().mean()
+        min_length = df[column].str.len().min()
+        max_length = df[column].str.len().max()
+
+        print(f"For column {column} in {df_name}, average length: {avg_length:.3f}, minimum length: {min_length}, maximum length: {max_length}")
+
+textual_columns = ['title', 'authors', 'abstract', 'url']
+measure_textual_columns(df_tableA, 'tableA', textual_columns)
+measure_textual_columns(df_tableB, 'tableB', 'tableB', textual_columns)
+```
+
+## Analysis:
+
+### Table A:
+
+    'title' column: average length of 78.259 characters, with a minimum length of 14 characters and a maximum length of 194 characters.
+    'authors' column: average length of 63.55 characters, with a minimum length of 7 characters and a maximum length of 463 characters.
+    'abstract' column: average length of 1346.466 characters, with a minimum length of 412 characters and a maximum length of 2232 characters.
+    'url' column: all the values have a fixed length of 49 characters.
+
+### Table B:
+
+    `'title'` column: average length of 85.043 characters, with a minimum length of 9 characters and a maximum length of 249 characters.
+    `'authors'` column: average length of 60.471 characters, with a minimum length of 8 characters and a maximum length of 288 characters.
+    `'abstract'` column: average length of 201.875 characters, with a minimum length of 11 characters and a maximum length of 215 characters.
+    `'url'` column: average length of 96.858 characters, with a minimum length of 83 characters and a maximum length of 120 characters.
+
+<br />
+
+* For both tables, the `'title'` and `'authors'` columns have more variability in the length of their values as compared to the `'url'` column, which has a fixed length in `tableA` and less variability in `tableB`. This suggests that the information in these columns might be more diverse and, therefore, require more sophisticated analysis and cleaning techniques.
+
+* The `'abstract'` column in table A has significantly more content (based on the average length) than `tableB`. This` indicates that abstracts in `tableA` might provide more detailed information about the articles than those in `tableB`.
+
+These observations help to identify the nature and quality of the textual data in the tables and can guide the further steps for data cleaning and preparation for analysis.
+
+<br />
+
+```python
+def plot_histogram(df, column, df_name):
+    df[column].str.len().hist(bins=30, color='skyblue', edgecolor='black')
+    plt.title(f"Histogram of {column} length in {df_name}")
+    plt.xlabel('Length of Text')
+    plt.ylabel('Frequency')
+    plt.grid(False)
+    plt.show()
+
+plot_histogram(df_tableA, 'title', 'tableA')
+plot_histogram(df_tableB, 'title', 'tableB')
+
+plot_histogram(df_tableA, 'abstract', 'tableA')
+plot_histogram(df_tableB, 'abstract', 'tableB')
+```
+
+<br />
+
+![TextualHistograms]({{ "/assets/img/Figure_4.png" | relative_url }})
+![TextualHistograms]({{ "/assets/img/Figure_5.png" | relative_url }})
+![TextualHistograms]({{ "/assets/img/Figure_6.png" | relative_url }})
+![TextualHistograms]({{ "/assets/img/Figure_7.png" | relative_url }})
+
+```python
+description_tableA_title = df_tableA['title'].str.len().describe()
+print("Description of title lengths in tableA:")
+print(description_tableA_title)
+
+description_tableA_abstract = df_tableA['abstract'].str.len().describe()
+print("\nDescription of abstract lengths in tableA:")
+print(description_tableA_abstract)
+
+description_tableB_title = df_tableB['title'].str.len().describe()
+print("\nDescription of title lengths in tableB:")
+print(description_tableB_title)
+
+description_tableB_abstract = df_tableB['abstract'].str.len().describe()
+print("\nDescription of abstract lengths in tableB:")
+print(description_tableB_abstract)
+```
+
+
+## Descriptive Statistics for Text Lengths
+
+### TableA
+
+- **Title Lengths**
+    - Count: 1000
+    - Mean: 78.259
+    - Standard Deviation: 24.299679
+    - Minimum: 14
+    - 25%: 63
+    - 50%: 76
+    - 75%: 92
+    - Maximum: 194
+
+- **Abstract Lengths**
+    - Count: 1000
+    - Mean: 1346.466
+    - Standard Deviation: 328.546703
+    - Minimum: 412
+    - 25%: 1120.75
+    - 50%: 1359
+    - 75%: 1579.25
+    - Maximum: 2232
+
+### TableB
+
+- **Title Lengths**
+    - Count: 1000
+    - Mean: 85.043
+    - Standard Deviation: 37.446353
+    - Minimum: 9
+    - 25%: 60
+    - 50%: 82
+    - 75%: 110
+    - Maximum: 249
+
+- **Abstract Lengths**
+    - Count: 899
+    - Mean: 201.875417
+    - Standard Deviation: 33.587900
+    - Minimum: 11
+    - 25%: 212
+    - 50%: 212
+    - 75%: 212
+    - Maximum: 215
+
+
+**Title length in TableA:**
+- The average length of a title is approximately 78 characters.
+- The standard deviation (a measure of spread) is around 24, suggesting that the lengths of the titles vary within a relatively moderate range.
+- The shortest title has 14 characters, while the longest has 194 characters.
+- 50% of the titles have a length of 76 characters or less (median).
+- Most titles (75%) have lengths under 92 characters.
+
+**Abstract length in TableA:**
+- The average length of an abstract is approximately 1346 characters.
+- The standard deviation is around 328, suggesting that the lengths of the abstracts vary widely.
+- The shortest abstract has 412 characters, while the longest abstract has 2232 characters.
+- 50% of the abstracts have a length of 1359 characters or less (median).
+- Most abstracts (75%) have lengths under 1579 characters.
+
+This might suggest differences in how the data was collected or entered for each table. For example, there might be a strict character limit for abstracts in the source that TableB was collected from. These kind of insights can be useful when considering how to preprocess the data for further analysis or modeling.
